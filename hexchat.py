@@ -3,7 +3,7 @@ import functools
 import types
 
 
-__version__ = (None, None)
+__version__ = (0, 0)
 
 # Priority given to hooks.
 PRI_HIGHEST = None
@@ -11,12 +11,16 @@ PRI_HIGH = None
 PRI_NORM = None
 PRI_LOW = None
 PRI_LOWEST = None
+_PRIORITIES = (PRI_HIGHEST, PRI_HIGH, PRI_NORM, PRI_LOW, PRI_LOWEST)
 
 # Used as return values for callbacks.
 EAT_PLUGIN = None
 EAT_HEXCHAT = None
 EAT_ALL = None
 EAT_NONE = None
+
+# Todo: Check if any of these were returned, preferably with a decorator
+_CALLBACK_RETURN_VALUES = (EAT_PLUGIN, EAT_HEXCHAT, EAT_ALL, EAT_NONE)
 
 _LIST_TYPES = ('channels', 'dcc', 'users', 'ignore', 'notify')
 _INFO_TYPES = (
@@ -65,6 +69,74 @@ _PRINT_EVENT_NAMES = (
     'WhoIs Server Line', 'WhoIs Special', 'You Join', 'You Kicked', 'You Part',
     'You Part with Reason', 'Your Action', 'Your Invitation', 'Your Message',
     'Your Nick Changing')
+
+
+class _Channel(object):
+
+    def __init__(self):
+        self.channel = ''
+        self.channelkey = ''
+        self.chantypes = ''
+        self.context = Context()
+        self.id = 0
+        self.lag = 0
+        self.maxmodes = 0
+        self.network = ''
+        self.nickprefixes = ''
+        self.nickmodes = ''
+        self.queue = 0
+        self.server = ''
+        self.users = 0
+        self.type = 0
+        self.flags = 0
+
+
+class _DCC(object):
+
+    def __init__(self):
+        self.address32 = 0
+        self.cps = 0
+        self.destfile = ''
+        self.file = ''
+        self.nick = ''
+        self.port = 0
+        self.pos = 0
+        self.resume = 0
+        self.size = 0
+        self.status = 0
+        self.type = 0
+
+
+class _User(object):
+
+    def __init__(self):
+        self.account = ''
+        self.away = ''
+        self.host = ''
+        self.nick = ''
+        self.prefix = ''
+        self.realname = ''
+        self.selected = True
+
+
+class _Ignore(object):
+
+    def __init__(self):
+        self.mask = ''
+        self.flags = 0
+
+
+class _Notify(object):
+
+    def __init__(self):
+        self.nick = ''
+        self.networks = ('',)
+        self.flags = 0
+
+
+_LIST_TYPES = {
+    'channels': _Channel, 'dcc': _DCC, 'users': _User, 'ignore': _Ignore,
+    'notify': _Notify}
 
 
 def _print_function_call(function):
@@ -116,32 +188,14 @@ class Context(object):
         Does the same as the :func:`get_info` function but in the given context.
         """
         assert type in _INFO_TYPES
+        return ''
 
     @_print_function_call
     def get_list(type):
         """
         Does the same as the :func:`get_list` function but in the given context.
         """
-        assert type in _LIST_TYPES
-
-
-class Channel(object):
-
-    def __init__(self):
-        self.channel = None
-        self.channelkey = None
-        self.chantypes = None
-        self.context = Context()
-        self.id = None
-        self.lag = None
-        self.maxmodes = None
-        self.network = None
-        self.nickprefixes = None
-        self.nickmodes = None
-        self.queue = None
-        self.server = None
-        self.users = None
-        self.type = None
+        return (_LIST_TYPES(type)(),)
 
 
 @_print_function_call
@@ -226,6 +280,8 @@ def strip(text, length=-1, flags=3):
         print(hexchat.strip(text, len(text), 1)) # Bold uncolored text
     """
     assert isinstance(text, basestring)
+    assert isinstance(length, int)
+    assert isinstance(flags, int)
     return text
 
 
@@ -269,6 +325,7 @@ def get_info(type):
        print(hexchat.get_info("event_text Channel Message"))
     """
     assert type in _INFO_TYPES
+    return ''
 
 
 @_print_function_call
@@ -286,7 +343,7 @@ def get_prefs(name):
     - id (unique server id)
     - state_cursor (location of cursor in input box)
     """
-    pass
+    return ''
 
 
 @_print_function_call
@@ -313,7 +370,7 @@ def get_list(type):
 
     Below you will find what each list type has to offer.
     """
-    assert type in _LIST_TYPES
+    return (_LIST_TYPES[type](),)
 
 
 @_print_function_call
@@ -344,7 +401,9 @@ def hook_command(name, callback, userdata=None, priority=PRI_NORM, help=None):
     You may return one of ``EAT_*`` constants in the callback, to control
     HexChat's behavior, as explained above.
     """
-    pass
+    assert isinstance(name, basestring)
+    assert isinstance(callback, (types.FunctionType, types.MethodType))
+    assert priority in _PRIORITIES
 
 
 @_print_function_call
@@ -387,6 +446,8 @@ def hook_print(name, callback, userdata=None, priority=PRI_NORM):
       - Length of the string (may be 0 for unprintable keys)
     """
     assert name in _PRINT_EVENT_NAMES
+    assert isinstance(callback, (types.FunctionType, types.MethodType))
+    assert priority in _PRIORITIES
 
 
 @_print_function_call
@@ -409,6 +470,8 @@ def hook_print_attrs(name, callback, userdata=None, priority=PRI_NORM):
         hexchat.hook_print_attrs("You Part", youpart_cb)
     """
     assert name in _PRINT_EVENT_NAMES
+    assert isinstance(callback, (types.FunctionType, types.MethodType))
+    assert priority in _PRIORITIES
 
 
 @_print_function_call
@@ -430,7 +493,9 @@ def hook_server(name, callback, userdata=None, priority=PRI_NORM):
 
        hexchat.hook_server("KICK", kick_cb)
     """
-    pass
+    assert isinstance(name, (basestring, int))
+    assert isinstance(callback, (types.FunctionType, types.MethodType))
+    assert priority in _PRIORITIES
 
 
 @_print_function_call
@@ -452,7 +517,9 @@ def hook_server_attrs(name, callback, userdata=None, priority=PRI_NORM):
 
        hexchat.hook_server_attrs("KICK", kick_cb)
     """
-    pass
+    assert isinstance(name, (basestring, int))
+    assert isinstance(callback, (types.FunctionType, types.MethodType))
+    assert priority in _PRIORITIES
 
 
 @_print_function_call
@@ -485,7 +552,8 @@ def hook_timer(timeout, callback, userdata=None):
     If you return a true value from the callback, the timer will be keeped,
     otherwise it is removed.
     """
-    pass
+    assert isinstance(timeout, int)
+    assert isinstance(callback, (types.FunctionType, types.MethodType))
 
 
 @_print_function_call
@@ -504,7 +572,7 @@ def hook_unload(callback, userdata=None):
 
        hexchat.hook_unload(unload_cb)
     """
-    pass
+    assert isinstance(callback, (types.FunctionType, types.MethodType))
 
 
 @_print_function_call
@@ -550,6 +618,7 @@ def get_pluginpref(name):
     .. versionadded:: 0.9
     """
     assert isinstance(name, basestring)
+    return ''
 
 
 @_print_function_call
@@ -576,7 +645,10 @@ def list_pluginpref():
 
     .. versionadded:: 0.9
     """
-    return ()
+
+    # Make sure to at least return a list of one string, so a loop can at least
+    # run once
+    return ('',)
 
 
 @_print_function_call
