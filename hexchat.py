@@ -198,6 +198,9 @@ class Context(object):
         return (_LIST_TYPES(type)(),)
 
 
+_CONTEXT = Context()
+
+
 @_print_function_call
 def prnt(string):
     """
@@ -656,7 +659,7 @@ def get_context():
     """
     :rtype: `context`
     """
-    return Context()
+    return _CONTEXT
 
 
 @_print_function_call
