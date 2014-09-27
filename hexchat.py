@@ -22,11 +22,11 @@ EAT_NONE = None
 # Todo: Check if any of these were returned, preferably with a decorator
 _CALLBACK_RETURN_VALUES = (EAT_PLUGIN, EAT_HEXCHAT, EAT_ALL, EAT_NONE)
 
-_LIST_TYPES = ('channels', 'dcc', 'users', 'ignore', 'notify')
+# Missing event_text NAME here, it is manually checked in get_info()
 _INFO_TYPES = (
-    'away', 'channel', 'charset', 'configdir', 'event_text', 'gtkwin_ptr',
-    'host', 'inputbox', 'network', 'nick', 'nickserv' 'modes', 'server',
-    'topic', 'win_status', 'version')
+    'away', 'channel', 'charset', 'configdir', 'gtkwin_ptr', 'host',
+    'inputbox', 'network', 'nick', 'nickserv' 'modes', 'server', 'topic',
+    'win_status', 'version')
 _PRINT_EVENT_NAMES = (
     'Add Notify', 'Ban List', 'Banned', 'Beep', 'Capability Acknowledgement',
     'Capability List', 'Capability Request', 'Change Nick', 'Channel Action',
@@ -162,43 +162,44 @@ class Context(object):
         pass
 
     @_print_function_call
-    def prnt(string):
+    def prnt(self, string):
         """
         Does the same as the :func:`prnt` function but in the given context.
         """
         assert isinstance(string, basestring)
 
     @_print_function_call
-    def emit_print(event_name, *args):
+    def emit_print(self, event_name, *args):
         """
         Does the same as the :func:`emit_print` function but in the given context.
         """
         assert event_name in _PRINT_EVENT_NAMES
 
     @_print_function_call
-    def command(string):
+    def command(self, string):
         """
         Does the same as the :func:`command` function but in the given context
         """
         assert isinstance(string, basestring)
 
     @_print_function_call
-    def get_info(type):
+    def get_info(self, type):
         """
         Does the same as the :func:`get_info` function but in the given context.
         """
-        assert type in _INFO_TYPES
+        if not type in _INFO_TYPES:
+            parts = type.split()
+            if not len(parts) == 2 or not parts[0] == 'event_text' or not len(parts[1]) > 0:
+                raise ValueError('invalid type')
+
         return ''
 
     @_print_function_call
-    def get_list(type):
+    def get_list(self, type):
         """
         Does the same as the :func:`get_list` function but in the given context.
         """
         return (_LIST_TYPES(type)(),)
-
-
-_CONTEXT = Context()
 
 
 @_print_function_call
