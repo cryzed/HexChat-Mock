@@ -493,7 +493,7 @@ def hook_server(name, callback, userdata=None, priority=PRI_NORM):
 
        hexchat.hook_server("KICK", kick_cb)
     """
-    assert isinstance(name, (basestring, int))
+    assert isinstance(name, basestring)
     assert isinstance(callback, (types.FunctionType, types.MethodType))
     assert priority in _PRIORITIES
 
@@ -517,7 +517,7 @@ def hook_server_attrs(name, callback, userdata=None, priority=PRI_NORM):
 
        hexchat.hook_server_attrs("KICK", kick_cb)
     """
-    assert isinstance(name, (basestring, int))
+    assert isinstance(name, basestring)
     assert isinstance(callback, (types.FunctionType, types.MethodType))
     assert priority in _PRIORITIES
 
