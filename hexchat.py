@@ -1,4 +1,7 @@
 # coding: UTF-8
+
+from __future__ import print_function
+
 import atexit
 import functools
 import types
@@ -162,11 +165,11 @@ class _HookHandler(object):
 def _print_function_call(function):
     @functools.wraps(function)
     def wrapped_function(*args, **kwargs):
-        print '%s(%s%s)' % (
+        print('%s(%s%s)' % (
             function.__name__,
             ', '.join((repr(arg) for arg in args)),
             ', '.join(('%s=%s' % (key, repr(value))
-                       for key, value in kwargs.items())))
+                       for key, value in kwargs.items()))))
         return function(*args, **kwargs)
 
     return wrapped_function
