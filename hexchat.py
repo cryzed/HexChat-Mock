@@ -161,7 +161,8 @@ class Context(object):
         """
         Changes the current context to be the one represented by this context object.
         """
-        pass
+        global _context
+        _context = self
 
     @_print_function_call
     def prnt(self, string):
@@ -202,9 +203,6 @@ class Context(object):
         Does the same as the :func:`get_list` function but in the given context.
         """
         return (_LIST_TYPES(type)(),)
-
-
-_context = Context()
 
 
 @_print_function_call
