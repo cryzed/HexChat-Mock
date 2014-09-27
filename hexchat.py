@@ -669,6 +669,8 @@ def get_context():
     return _context
 
 
+# TODO: Cache the returned context object for the given parameters and always
+# return the same
 @_print_function_call
 def find_context(server=None, channel=None):
     """
