@@ -149,6 +149,7 @@ _LIST_TYPES = {
 
 
 class _HookHandler(object):
+
     def __init__(self, calback, userdata):
         self.calback = calback
         self.userdata = userdata
