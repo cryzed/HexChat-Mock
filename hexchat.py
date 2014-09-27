@@ -202,7 +202,7 @@ class Context(object):
         return (_LIST_TYPES(type)(),)
 
 
-_CONTEXT = Context()
+_context = Context()
 
 
 @_print_function_call
@@ -663,7 +663,7 @@ def get_context():
     """
     :rtype: `context`
     """
-    return _CONTEXT
+    return _context
 
 
 @_print_function_call
