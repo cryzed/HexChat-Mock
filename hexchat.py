@@ -6,7 +6,6 @@ import types
 
 __version__ = (1, 0)
 
-# Priority given to hooks.
 PRI_HIGHEST = 127
 PRI_HIGH = 64
 PRI_NORM = 0
@@ -14,12 +13,11 @@ PRI_LOW = -64
 PRI_LOWEST = -128
 _PRIORITIES = (PRI_HIGHEST, PRI_HIGH, PRI_NORM, PRI_LOW, PRI_LOWEST)
 
-# Used as return values for callbacks.
 EAT_ALL = 3
 EAT_PLUGIN = 2
 EAT_HEXCHAT = 1
 EAT_NONE = 0
-_CALLBACK_RETURN_VALUES = (EAT_PLUGIN, EAT_HEXCHAT, EAT_ALL, EAT_NONE)
+_CALLBACK_RETURN_VALUES = (EAT_ALL, EAT_PLUGIN, EAT_HEXCHAT, EAT_NONE)
 
 # Missing event_text NAME here, it is manually checked in get_info()
 _INFO_TYPES = (
