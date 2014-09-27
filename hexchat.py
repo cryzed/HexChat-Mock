@@ -205,6 +205,9 @@ class Context(object):
         return (_LIST_TYPES(type)(),)
 
 
+_context = Context()
+
+
 @_print_function_call
 def prnt(string):
     """
