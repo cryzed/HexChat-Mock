@@ -402,8 +402,8 @@ def hook_command(name, callback, userdata=None, priority=PRI_NORM, help=None):
     HexChat's behavior, as explained above.
     """
     assert isinstance(name, basestring)
-    assert isinstance(callback, (types.FunctionType, types.MethodType))
     assert priority in _PRIORITIES
+    assert callback(('',), ('',), userdata) in _CALLBACK_RETURN_VALUES
 
 
 @_print_function_call
@@ -446,8 +446,8 @@ def hook_print(name, callback, userdata=None, priority=PRI_NORM):
       - Length of the string (may be 0 for unprintable keys)
     """
     assert name in _PRINT_EVENT_NAMES
-    assert isinstance(callback, (types.FunctionType, types.MethodType))
     assert priority in _PRIORITIES
+    assert callback(('',), ('',), userdata) in _CALLBACK_RETURN_VALUES
 
 
 @_print_function_call
@@ -470,8 +470,8 @@ def hook_print_attrs(name, callback, userdata=None, priority=PRI_NORM):
         hexchat.hook_print_attrs("You Part", youpart_cb)
     """
     assert name in _PRINT_EVENT_NAMES
-    assert isinstance(callback, (types.FunctionType, types.MethodType))
     assert priority in _PRIORITIES
+    assert callback(('',), ('',), userdata) in _CALLBACK_RETURN_VALUES
 
 
 @_print_function_call
@@ -494,8 +494,8 @@ def hook_server(name, callback, userdata=None, priority=PRI_NORM):
        hexchat.hook_server("KICK", kick_cb)
     """
     assert isinstance(name, basestring)
-    assert isinstance(callback, (types.FunctionType, types.MethodType))
     assert priority in _PRIORITIES
+    assert callback(('',), ('',), userdata) in _CALLBACK_RETURN_VALUES
 
 
 @_print_function_call
@@ -518,8 +518,8 @@ def hook_server_attrs(name, callback, userdata=None, priority=PRI_NORM):
        hexchat.hook_server_attrs("KICK", kick_cb)
     """
     assert isinstance(name, basestring)
-    assert isinstance(callback, (types.FunctionType, types.MethodType))
     assert priority in _PRIORITIES
+    assert callback(('',), ('',), userdata) in _CALLBACK_RETURN_VALUES
 
 
 @_print_function_call
@@ -553,7 +553,7 @@ def hook_timer(timeout, callback, userdata=None):
     otherwise it is removed.
     """
     assert isinstance(timeout, int)
-    assert isinstance(callback, (types.FunctionType, types.MethodType))
+    assert callback(('',), ('',), userdata) in _CALLBACK_RETURN_VALUES
 
 
 @_print_function_call
@@ -572,7 +572,7 @@ def hook_unload(callback, userdata=None):
 
        hexchat.hook_unload(unload_cb)
     """
-    assert isinstance(callback, (types.FunctionType, types.MethodType))
+    callback(userdata)
 
 
 @_print_function_call
