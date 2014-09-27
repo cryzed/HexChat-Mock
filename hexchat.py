@@ -1,4 +1,5 @@
 # coding: UTF-8
+import atexit
 import functools
 import types
 
@@ -73,6 +74,17 @@ _PRINT_EVENT_NAMES = (
     'Your Nick Changing')
 
 
+_hook_handlers = []
+_unload_hook_handlers = []
+
+
+# Make sure to actually call unload-hook handlers at the end of the script
+@atexit.register
+def _unload_hooks():
+    for hook_handler in _unload_hook_handlers:
+        hook_handler.handle()
+
+
 class _Channel(object):
 
     def __init__(self):
@@ -139,6 +151,15 @@ class _Notify(object):
 _LIST_TYPES = {
     'channels': _Channel, 'dcc': _DCC, 'users': _User, 'ignore': _Ignore,
     'notify': _Notify}
+
+
+class _HookHandler(object):
+    def __init__(self, calback, userdata):
+        self.calback = calback
+        self.userdata = userdata
+
+    def handle(self):
+        self.calback(self.userdata)
 
 
 def _print_function_call(function):
@@ -414,6 +435,9 @@ def hook_command(name, callback, userdata=None, priority=PRI_NORM, help=None):
     assert isinstance(name, basestring)
     assert priority in _PRIORITIES
     assert callback(('',), ('',), userdata) in _CALLBACK_RETURN_VALUES
+    hook_handler = _HookHandler(callback, userdata)
+    _hook_handlers.append(hook_handler)
+    return hook_handler
 
 
 @_print_function_call
@@ -458,6 +482,9 @@ def hook_print(name, callback, userdata=None, priority=PRI_NORM):
     assert name in _PRINT_EVENT_NAMES
     assert priority in _PRIORITIES
     assert callback(('',), ('',), userdata) in _CALLBACK_RETURN_VALUES
+    hook_handler = _HookHandler(callback, userdata)
+    _hook_handlers.append(hook_handler)
+    return hook_handler
 
 
 @_print_function_call
@@ -482,6 +509,9 @@ def hook_print_attrs(name, callback, userdata=None, priority=PRI_NORM):
     assert name in _PRINT_EVENT_NAMES
     assert priority in _PRIORITIES
     assert callback(('',), ('',), userdata) in _CALLBACK_RETURN_VALUES
+    hook_handler = _HookHandler(callback, userdata)
+    _hook_handlers.append(hook_handler)
+    return hook_handler
 
 
 @_print_function_call
@@ -506,6 +536,9 @@ def hook_server(name, callback, userdata=None, priority=PRI_NORM):
     assert isinstance(name, basestring)
     assert priority in _PRIORITIES
     assert callback(('',), ('',), userdata) in _CALLBACK_RETURN_VALUES
+    hook_handler = _HookHandler(callback, userdata)
+    _hook_handlers.append(hook_handler)
+    return hook_handler
 
 
 @_print_function_call
@@ -530,6 +563,9 @@ def hook_server_attrs(name, callback, userdata=None, priority=PRI_NORM):
     assert isinstance(name, basestring)
     assert priority in _PRIORITIES
     assert callback(('',), ('',), userdata) in _CALLBACK_RETURN_VALUES
+    hook_handler = _HookHandler(callback, userdata)
+    _hook_handlers.append(hook_handler)
+    return hook_handler
 
 
 @_print_function_call
@@ -564,6 +600,9 @@ def hook_timer(timeout, callback, userdata=None):
     """
     assert isinstance(timeout, int)
     callback(userdata)
+    hook_handler = _HookHandler(callback, userdata)
+    _hook_handlers.append(hook_handler)
+    return hook_handler
 
 
 @_print_function_call
@@ -582,7 +621,9 @@ def hook_unload(callback, userdata=None):
 
        hexchat.hook_unload(unload_cb)
     """
-    callback(userdata)
+    hook_handler = _HookHandler(callback, userdata)
+    _unload_hook_handlers.append(hook_handler)
+    return hook_handler
 
 
 @_print_function_call
@@ -594,7 +635,14 @@ def unhook(handler):
 
     As of version 1.0 of the plugin hooks from :func:`hook_print` and :func:`hook_command` can be unhooked by their names.
     """
-    pass
+
+    # Simply fail if the hook handler is not contained in the "regular" hook
+    # handlers and try removing it from the unload-hook handlers. Let the
+    # exception bubble up if it doesn't exist there either
+    try:
+        _hook_handlers.remove(handler)
+    except ValueError:
+        _unload_hook_handlers.remove(handler)
 
 
 @_print_function_call
@@ -669,8 +717,9 @@ def get_context():
     return _context
 
 
-# TODO: Cache the returned context object for the given parameters and always
-# return the same
+_find_context_cache = {}
+
+
 @_print_function_call
 def find_context(server=None, channel=None):
     """
@@ -685,7 +734,14 @@ def find_context(server=None, channel=None):
        cnc = hexchat.find_context(channel='#conectiva')
        cnc.command('whois niemeyer')
     """
+    key = server, channel
+    if key in _find_context_cache:
+        return _find_context_cache[key]
+
     assert server is not None or channel is not None
     assert isinstance(server, (types.NoneType, basestring))
     assert isinstance(channel, (types.NoneType, basestring))
-    return Context()
+
+    context = Context()
+    _find_context_cache[key] = context
+    return context
