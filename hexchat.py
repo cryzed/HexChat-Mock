@@ -6,7 +6,6 @@ import types
 
 __version__ = (1, 0)
 
-
 # Priority given to hooks.
 PRI_HIGHEST = 127
 PRI_HIGH = 64
@@ -20,7 +19,6 @@ EAT_ALL = 3
 EAT_PLUGIN = 2
 EAT_HEXCHAT = 1
 EAT_NONE = 0
-
 _CALLBACK_RETURN_VALUES = (EAT_PLUGIN, EAT_HEXCHAT, EAT_ALL, EAT_NONE)
 
 # Missing event_text NAME here, it is manually checked in get_info()
@@ -28,6 +26,7 @@ _INFO_TYPES = (
     'away', 'channel', 'charset', 'configdir', 'gtkwin_ptr', 'host',
     'inputbox', 'network', 'nick', 'nickserv' 'modes', 'server', 'topic',
     'win_status', 'version')
+
 _PRINT_EVENT_NAMES = (
     'Add Notify', 'Ban List', 'Banned', 'Beep', 'Capability Acknowledgement',
     'Capability List', 'Capability Request', 'Change Nick', 'Channel Action',
