@@ -71,6 +71,7 @@ _PRINT_EVENT_NAMES = (
 
 _hook_handlers = []
 _unload_hook_handlers = []
+_find_context_cache = {}
 
 
 # Make sure to actually call unload-hook handlers at the end of the script
@@ -711,9 +712,6 @@ def get_context():
     :rtype: `context`
     """
     return _context
-
-
-_find_context_cache = {}
 
 
 @_print_function_call
