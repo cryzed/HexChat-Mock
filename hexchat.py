@@ -553,7 +553,7 @@ def hook_timer(timeout, callback, userdata=None):
     otherwise it is removed.
     """
     assert isinstance(timeout, int)
-    assert callback(('',), ('',), userdata) in _CALLBACK_RETURN_VALUES
+    callback(userdata)
 
 
 @_print_function_call
