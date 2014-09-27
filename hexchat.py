@@ -150,12 +150,12 @@ _LIST_TYPES = {
 
 class _HookHandler(object):
 
-    def __init__(self, calback, userdata):
-        self.calback = calback
+    def __init__(self, callback, userdata):
+        self.callback = callback
         self.userdata = userdata
 
     def handle(self):
-        self.calback(self.userdata)
+        self.callback(self.userdata)
 
 
 def _print_function_call(function):
