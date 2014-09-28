@@ -91,6 +91,7 @@ class _Channel(object):
         self.channelkey = ''
         self.chantypes = ''
         self.context = Context()
+        self.flags = 0
         self.id = 0
         self.lag = 0
         self.maxmodes = 0
@@ -99,9 +100,8 @@ class _Channel(object):
         self.nickmodes = ''
         self.queue = 0
         self.server = ''
-        self.users = 0
         self.type = 0
-        self.flags = 0
+        self.users = 0
 
 
 class _DCC(object):
@@ -114,8 +114,11 @@ class _DCC(object):
         self.nick = ''
         self.port = 0
         self.pos = 0
+        self.poshigh = 0
         self.resume = 0
+        self.resumehigh = 0
         self.size = 0
+        self.sizehigh = 0
         self.status = 0
         self.type = 0
 
@@ -124,12 +127,13 @@ class _User(object):
 
     def __init__(self):
         self.account = ''
-        self.away = ''
-        self.host = ''
+        self.away = 0
+        self.lasttalk = 0
         self.nick = ''
+        self.host = ''
         self.prefix = ''
         self.realname = ''
-        self.selected = True
+        self.selected = 0
 
 
 class _Ignore(object):
@@ -142,9 +146,12 @@ class _Ignore(object):
 class _Notify(object):
 
     def __init__(self):
+        self.networks = ''
         self.nick = ''
-        self.networks = ('',)
         self.flags = 0
+        self.on = 0
+        self.off = 0
+        self.seen = 0
 
 
 _LIST_TYPES = {
@@ -735,7 +742,6 @@ def find_context(server=None, channel=None):
     if key in _find_context_cache:
         return _find_context_cache[key]
 
-    assert server is not None or channel is not None
     assert isinstance(server, (types.NoneType, basestring))
     assert isinstance(channel, (types.NoneType, basestring))
 
