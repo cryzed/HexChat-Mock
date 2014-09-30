@@ -77,13 +77,6 @@ _unload_hook_handlers = []
 _find_context_cache = {}
 
 
-# Make sure to actually call unload-hook handlers at the end of the script
-@atexit.register
-def _unload_hooks():
-    for hook_handler in _unload_hook_handlers:
-        hook_handler.handle()
-
-
 class _Channel(object):
 
     def __init__(self):
@@ -154,11 +147,6 @@ class _Notify(object):
         self.seen = 0
 
 
-_LIST_TYPES = {
-    'channels': _Channel, 'dcc': _DCC, 'users': _User, 'ignore': _Ignore,
-    'notify': _Notify}
-
-
 class _HookHandler(object):
 
     def __init__(self, callback, userdata):
@@ -167,6 +155,24 @@ class _HookHandler(object):
 
     def handle(self):
         self.callback(self.userdata)
+
+
+class Attributes(object):
+
+    def __init__(self):
+        self.time = 0
+
+
+_LIST_TYPES = {
+    'channels': _Channel, 'dcc': _DCC, 'users': _User, 'ignore': _Ignore,
+    'notify': _Notify}
+
+
+# Make sure to actually call unload-hook handlers at the end of the script
+@atexit.register
+def _unload_hooks():
+    for hook_handler in _unload_hook_handlers:
+        hook_handler.handle()
 
 
 def _print_function_call(function):
@@ -515,7 +521,7 @@ def hook_print_attrs(name, callback, userdata=None, priority=PRI_NORM):
     """
     assert name in _PRINT_EVENT_NAMES
     assert priority in _PRIORITIES
-    assert callback(('',), ('',), userdata) in _CALLBACK_RETURN_VALUES
+    assert callback(('',), ('',), userdata, Attributes()) in _CALLBACK_RETURN_VALUES
     hook_handler = _HookHandler(callback, userdata)
     _hook_handlers.append(hook_handler)
     return hook_handler
@@ -569,7 +575,7 @@ def hook_server_attrs(name, callback, userdata=None, priority=PRI_NORM):
     """
     assert isinstance(name, basestring)
     assert priority in _PRIORITIES
-    assert callback(('',), ('',), userdata) in _CALLBACK_RETURN_VALUES
+    assert callback(('',), ('',), userdata, Attributes()) in _CALLBACK_RETURN_VALUES
     hook_handler = _HookHandler(callback, userdata)
     _hook_handlers.append(hook_handler)
     return hook_handler
