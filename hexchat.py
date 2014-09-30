@@ -156,7 +156,7 @@ class _HookHandler(object):
         self.callback(self.userdata)
 
 
-class Attributes(object):
+class _Attributes(object):
 
     def __init__(self):
         self.time = 0
@@ -520,7 +520,7 @@ def hook_print_attrs(name, callback, userdata=None, priority=PRI_NORM):
     """
     assert name in _PRINT_EVENT_NAMES
     assert priority in _PRIORITIES
-    assert callback(('',), ('',), userdata, Attributes()) in _CALLBACK_RETURN_VALUES
+    assert callback(('',), ('',), userdata, _Attributes()) in _CALLBACK_RETURN_VALUES
     hook_handler = _HookHandler(callback, userdata)
     _hook_handlers.append(hook_handler)
     return hook_handler
@@ -574,7 +574,7 @@ def hook_server_attrs(name, callback, userdata=None, priority=PRI_NORM):
     """
     assert isinstance(name, basestring)
     assert priority in _PRIORITIES
-    assert callback(('',), ('',), userdata, Attributes()) in _CALLBACK_RETURN_VALUES
+    assert callback(('',), ('',), userdata, _Attributes()) in _CALLBACK_RETURN_VALUES
     hook_handler = _HookHandler(callback, userdata)
     _hook_handlers.append(hook_handler)
     return hook_handler
