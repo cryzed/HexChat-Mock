@@ -71,7 +71,6 @@ _PRINT_EVENT_NAMES = (
     'You Part with Reason', 'Your Action', 'Your Invitation', 'Your Message',
     'Your Nick Changing')
 
-
 _hook_handlers = []
 _unload_hook_handlers = []
 _find_context_cache = {}
