@@ -6,6 +6,12 @@ import atexit
 import functools
 import types
 
+# Fix for missing basestring in Python 3
+try:
+    basestring
+except NameError:
+    basestring = str
+
 
 __version__ = (1, 0)
 
