@@ -229,7 +229,7 @@ class Context(object):
         """
         Does the same as the :func:`get_info` function but in the given context.
         """
-        if not type in _INFO_TYPES:
+        if type not in _INFO_TYPES:
             parts = type.split()
             if not len(parts) == 2 or not parts[0] == 'event_text' or not len(parts[1]) > 0:
                 raise ValueError('invalid type')
